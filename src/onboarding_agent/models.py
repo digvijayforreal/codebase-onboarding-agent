@@ -71,6 +71,7 @@ class RepoReport:
     languages: dict[str, int]
     files: list[FileReport]
     generated_at: str
+    graph: dict[str, Any] = field(default_factory=dict)  # file-level data-flow graph
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -81,4 +82,5 @@ class RepoReport:
             "languages": self.languages,
             "generated_at": self.generated_at,
             "files": [f.to_dict() for f in self.files],
+            "graph": self.graph,
         }

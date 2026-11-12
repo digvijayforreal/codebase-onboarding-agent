@@ -70,6 +70,20 @@ def ask(req: AskRequest):
     return {"answer": session.ask(q)}
 
 
+class FlowRequest(BaseModel):
+    path: str
+
+
+@app.post("/api/file_flow")
+def file_flow(req: FlowRequest):
+    if not session.report:
+        raise HTTPException(status_code=404, detail="no analysis yet")
+    path = req.path.strip()
+    if not path:
+        raise HTTPException(status_code=400, detail="path is required")
+    return session.file_flow(path)
+
+
 # ---- static frontend ----
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")

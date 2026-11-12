@@ -9,6 +9,7 @@ import threading
 from pathlib import Path
 
 from .agent.orchestrator import OnboardingAgent
+from .analysis import graph as graph_mod
 from .models import RepoReport
 from .pipeline import analyze_repo
 from .retrieval.index import CodeIndex
@@ -60,6 +61,13 @@ class Session:
         if not self.agent:
             return {"summary": "No repository analysed yet.", "steps": []}
         return self.agent.build_tour()
+
+    def file_flow(self, path: str) -> dict:
+        if not self.report or not self.root:
+            return {"path": path, "functions": [], "calls": [], "imports": [], "dependents": []}
+        rel_paths = [f.path for f in self.report.files]
+        repo_edges = (self.report.graph or {}).get("edges", [])
+        return graph_mod.build_file_flow(self.root, path, rel_paths, repo_edges)
 
 
 session = Session()

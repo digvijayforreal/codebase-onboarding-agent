@@ -8,6 +8,7 @@ from pathlib import Path
 from .analysis import centrality as centrality_mod
 from .analysis import complexity as complexity_mod
 from .analysis import difficulty as diff_mod
+from .analysis import graph as graph_mod
 from .analysis.forecast import forecast_pressure
 from .ingest.git_history import collect_git_stats
 from .ingest.repo_loader import list_source_files, resolve_repo
@@ -90,6 +91,12 @@ def analyze_repo(source: str, max_files: int = 1500) -> tuple[RepoReport, Path]:
 
     languages = Counter(lang_by_path.values())
 
+    difficulty_by_path = {r.path: r.difficulty_score for r in reports}
+    centrality_by_path = {r.path: r.centrality for r in reports}
+    data_flow = graph_mod.build_file_graph(
+        root, rel_paths, lang_by_path, difficulty_by_path, centrality_by_path
+    )
+
     report = RepoReport(
         name=name,
         source=source,
@@ -98,5 +105,6 @@ def analyze_repo(source: str, max_files: int = 1500) -> tuple[RepoReport, Path]:
         languages=dict(languages),
         files=reports,
         generated_at=datetime.now(timezone.utc).isoformat(),
+        graph=data_flow,
     )
     return report, root

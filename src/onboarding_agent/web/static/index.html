@@ -5,121 +5,158 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Codebase Onboarding Agent</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/static/css/styles.css" />
 </head>
 <body>
-  <canvas id="stars"></canvas>
+  <div class="bg-blobs" aria-hidden="true">
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+  </div>
 
-  <!-- ===================== LAUNCH VIEW ===================== -->
-  <section id="launch-view" class="launch-view">
-    <div class="hero">
-      <div class="hero-badge">◈ Onboarding Intelligence</div>
-      <h1 class="hero-title">
-        Learn any codebase<br /><span class="grad">the fast way in.</span>
-      </h1>
-      <p class="hero-tag">
-        Point it at any repository. It reads the git history, scores every module,
-        and shows you exactly what will trip you up — then teaches you the path through.
-      </p>
+  <div class="app">
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="sidebar glass">
+      <div class="side-brand">
+        <svg class="brand-mark" viewBox="0 0 24 24"><path d="M12 2 L22 12 L12 22 L2 12 Z" /></svg>
+        <span>Onboard</span>
+      </div>
 
-      <div class="launch-inner">
-        <input id="source" type="text"
-          placeholder="https://github.com/owner/repo   ·   or a local path like C:\path\to\repo" />
-        <button id="analyze-btn" class="primary">
-          <span class="btn-label">Analyze</span>
-          <span class="spinner" hidden></span>
+      <nav class="side-nav">
+        <button class="nav-item active" data-nav="analyze" title="Analyze a repository">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          <span>Analyze</span>
         </button>
+        <button class="nav-item" data-nav="workflow" id="nav-workflow" disabled title="How the code flows">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="5" rx="1.5"/><rect x="14" y="15" width="7" height="5" rx="1.5"/><path d="M6.5 9 v4 a2 2 0 0 0 2 2 H14"/></svg>
+          <span>Workflow</span>
+        </button>
+        <button class="nav-item" data-nav="ask" id="nav-ask" disabled title="Ask the codebase">
+          <svg viewBox="0 0 24 24"><path d="M4 5 h16 a1 1 0 0 1 1 1 v9 a1 1 0 0 1 -1 1 H9 l-4 4 v-4 H4 a1 1 0 0 1 -1 -1 V6 a1 1 0 0 1 1 -1 Z"/></svg>
+          <span>Ask AI</span>
+        </button>
+      </nav>
+
+      <div class="side-foot">
+        <span class="chip" id="chip-groq">Groq</span>
+        <span class="chip" id="chip-tavily">Tavily</span>
       </div>
+    </aside>
 
-      <div id="status" class="status"></div>
+    <!-- ===================== MAIN CONTENT ===================== -->
+    <main class="content">
+      <!-- launch / hero -->
+      <section id="launch-view" class="launch-view">
+        <div class="hero glass">
+          <span class="hero-badge">Onboarding Intelligence</span>
+          <h1 class="hero-title">Learn any codebase, the fast way in.</h1>
+          <p class="hero-tag">
+            Point it at a repository. It reads the git history, scores every module,
+            and shows you what will trip you up, then teaches you the path through.
+          </p>
 
-      <div class="samples">
-        <span class="samples-label">Try one:</span>
-        <button class="sample" data-src="https://github.com/pallets/flask">pallets/flask</button>
-        <button class="sample" data-src="https://github.com/psf/requests">psf/requests</button>
-        <button class="sample" data-src="https://github.com/tiangolo/fastapi">tiangolo/fastapi</button>
-      </div>
+          <div class="launch-inner">
+            <input id="source" type="text"
+              placeholder="https://github.com/owner/repo   or   C:\path\to\repo" />
+            <button id="analyze-btn" class="primary">
+              <span class="btn-label">Analyze</span>
+              <span class="spinner" hidden></span>
+            </button>
+          </div>
 
-      <div class="feature-row">
-        <div class="feature"><span class="f-ic">📈</span><div><h3>Forecasting</h3><p>Spots the modules heating up right now.</p></div></div>
-        <div class="feature"><span class="f-ic">🤖</span><div><h3>Agentic AI</h3><p>Reasons across files to answer questions.</p></div></div>
-        <div class="feature"><span class="f-ic">🔎</span><div><h3>Hybrid RAG</h3><p>Vector + keyword search over the repo.</p></div></div>
-        <div class="feature"><span class="f-ic">🧭</span><div><h3>Guided Tours</h3><p>An ordered path, easiest-first.</p></div></div>
-      </div>
+          <div id="status" class="status"></div>
 
-      <div class="chips">
-        <span class="chip" id="chip-groq">Groq: …</span>
-        <span class="chip" id="chip-tavily">Tavily: …</span>
+          <div class="samples">
+            <span class="samples-label">Try one</span>
+            <button class="sample" data-src="https://github.com/pallets/flask">pallets/flask</button>
+            <button class="sample" data-src="https://github.com/psf/requests">psf/requests</button>
+            <button class="sample" data-src="https://github.com/tiangolo/fastapi">tiangolo/fastapi</button>
+          </div>
+
+          <div class="feature-row">
+            <div class="feature"><span class="f-dot"></span><div><h3>Forecasting</h3><p>Spots the modules heating up right now.</p></div></div>
+            <div class="feature"><span class="f-dot"></span><div><h3>Agentic AI</h3><p>Reasons across files to answer questions.</p></div></div>
+            <div class="feature"><span class="f-dot"></span><div><h3>Hybrid RAG</h3><p>Vector plus keyword search over the repo.</p></div></div>
+            <div class="feature"><span class="f-dot"></span><div><h3>Guided Tours</h3><p>An ordered path, easiest first.</p></div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- dashboard -->
+      <section id="dashboard" class="dashboard" hidden>
+        <header class="topbar glass">
+          <div class="repo-id">
+            <h1 id="repo-name">Repository</h1>
+            <p class="tag" id="repo-sub">Difficulty, hotspots, and a guided way in.</p>
+          </div>
+          <button id="new-analysis" class="ghost">New analysis</button>
+        </header>
+
+        <section class="stats" id="stats"></section>
+
+        <div class="grid">
+          <section class="panel glass heatmap-panel">
+            <div class="panel-head">
+              <h2>Difficulty Heatmap</h2>
+              <span class="hint">redder means harder for a newcomer</span>
+            </div>
+            <div id="heatmap" class="heatmap"></div>
+          </section>
+
+          <section class="panel glass detail-panel">
+            <div class="panel-head"><h2 id="detail-title">Module detail</h2></div>
+            <div id="detail" class="detail">
+              <p class="muted">Hover or click a tile to inspect a module.</p>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel glass tour-panel">
+          <div class="panel-head">
+            <h2>Guided Tour</h2>
+            <button id="tour-btn" class="ghost">Build tour</button>
+          </div>
+          <div id="tour-summary" class="tour-summary muted">
+            Generate an ordered path through the codebase, easiest first.
+          </div>
+          <ol id="tour" class="tour"></ol>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <!-- ===================== MODALS ===================== -->
+  <div id="overlay" class="overlay" hidden>
+    <div class="modal glass" id="modal-workflow" role="dialog" aria-modal="true">
+      <header class="modal-head">
+        <h2>How a request flows through the code</h2>
+        <button class="modal-close" data-close aria-label="Close">&times;</button>
+      </header>
+      <div class="modal-body">
+        <p class="flow-explain" id="flow-explain"></p>
+        <div class="flow-pipe" id="flow-pipe"></div>
+        <div class="flow-caption muted" id="flow-caption">
+          Click any file to see what feeds into it and what it feeds.
+        </div>
       </div>
     </div>
-  </section>
 
-  <!-- ===================== DASHBOARD VIEW ===================== -->
-  <main id="dashboard" class="dashboard" hidden>
-    <header class="topbar">
-      <div class="brand">
-        <span class="logo">◈</span>
-        <div>
-          <h1 id="repo-name">Codebase Onboarding Agent</h1>
-          <p class="tag" id="repo-sub">Difficulty, hotspots, and a guided way in.</p>
-        </div>
-      </div>
-      <div class="top-actions">
-        <div class="chips">
-          <span class="chip" id="chip-groq-2">Groq: …</span>
-          <span class="chip" id="chip-tavily-2">Tavily: …</span>
-        </div>
-        <button id="new-analysis" class="ghost">↺ New analysis</button>
-      </div>
-    </header>
-
-    <section class="stats" id="stats"></section>
-
-    <div class="grid">
-      <section class="panel heatmap-panel">
-        <div class="panel-head">
-          <h2>Difficulty Heatmap</h2>
-          <span class="hint">redder = harder for a newcomer</span>
-        </div>
-        <div id="heatmap" class="heatmap"></div>
-      </section>
-
-      <section class="panel detail-panel">
-        <div class="panel-head"><h2 id="detail-title">Module detail</h2></div>
-        <div id="detail" class="detail">
-          <p class="muted">Hover or click a tile to inspect a module.</p>
-        </div>
-      </section>
-    </div>
-
-    <div class="grid">
-      <section class="panel tour-panel">
-        <div class="panel-head">
-          <h2>Guided Tour</h2>
-          <button id="tour-btn" class="ghost">Build tour</button>
-        </div>
-        <div id="tour-summary" class="tour-summary muted">
-          Generate an ordered path through the codebase, easiest-first.
-        </div>
-        <ol id="tour" class="tour"></ol>
-      </section>
-
-      <section class="panel chat-panel">
-        <div class="panel-head"><h2>Ask the codebase</h2></div>
+    <div class="modal glass" id="modal-chat" role="dialog" aria-modal="true">
+      <header class="modal-head">
+        <h2>Ask the codebase</h2>
+        <button class="modal-close" data-close aria-label="Close">&times;</button>
+      </header>
+      <div class="modal-body chat-body">
         <div id="chat" class="chat"></div>
         <form id="chat-form" class="chat-form">
           <input id="question" type="text" autocomplete="off"
-            placeholder="e.g. How does a request get routed to the database?" />
+            placeholder="e.g. How does a request reach the database?" />
           <button class="primary" type="submit">Send</button>
         </form>
-      </section>
+      </div>
     </div>
-
-    <footer class="foot">
-      <span>Forecasting · Agentic AI · RAG · Hybrid Search · MCP-ready</span>
-    </footer>
-  </main>
+  </div>
 
   <script src="/static/js/app.js"></script>
 </body>
