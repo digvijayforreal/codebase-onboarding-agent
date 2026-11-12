@@ -1,3 +1,4 @@
+
 """End-to-end analysis pipeline: source + git history -> scored RepoReport."""
 from __future__ import annotations
 
