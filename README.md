@@ -25,43 +25,43 @@ It turns a wall of unfamiliar code into a ranked map, a guided tour, and a code-
 | API + UI | FastAPI + animated vanilla-JS single page |
 | Interop | MCP server (`mcp`) |
 
-## Setup
+## Quickstart
 
-Requires Python 3.11+ and git on PATH.
+Needs [uv](https://docs.astral.sh/uv/getting-started/installation/) and git on PATH. uv manages the Python version and every dependency for you.
 
-```powershell
-# from the project folder
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -e .
+```bash
+uv sync          # create the venv + install everything from the lockfile
+uv run onboard   # start the web app at http://127.0.0.1:8000
 ```
 
-Copy `.env.example` to `.env` and add your keys (Groq + Tavily). The app still
-runs without keys: the difficulty map, hotspots, hybrid search and a deterministic
-fallback tour all work offline. The LLM chat and LLM-authored tour need a Groq key.
+That's the whole setup. Open the URL, paste a GitHub URL (e.g. `https://github.com/pallets/flask`)
+or a local path, and hit Analyze.
+
+### API keys (optional)
+
+On first run a `.env` is created for you. Add your keys to enable the LLM features:
+
+```ini
+GROQ_API_KEY=...     # enables the "Ask AI" chat + LLM-authored tour
+TAVILY_API_KEY=...   # enables web search for third-party library docs
+```
+
+Everything else — the difficulty map, hotspots, hybrid search, data-flow view and a
+deterministic fallback tour — works offline with no keys.
 
 > Security: never commit `.env`. If a key was ever shared in plain text, rotate it.
 
-## Run the web app
+### Other commands
 
-```powershell
-onboard serve
-# or: python -m onboarding_agent.cli serve
-# then open http://127.0.0.1:8000
-```
-
-Paste a GitHub URL (e.g. `https://github.com/pallets/flask`) or a local path and hit Analyze.
-
-## Run from the terminal
-
-```powershell
-onboard analyze https://github.com/psf/requests --top 20
+```bash
+uv run onboard serve --port 8080                                 # choose a port
+uv run onboard analyze https://github.com/psf/requests --top 20  # terminal-only difficulty map
 ```
 
 ## Run as an MCP server
 
-```powershell
-python -m onboarding_agent.mcp_server
+```bash
+uv run python -m onboarding_agent.mcp_server
 ```
 
 Then register the command in your MCP client (Kiro, Claude Desktop, Cursor). Tools:

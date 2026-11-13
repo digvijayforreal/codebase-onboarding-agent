@@ -2,9 +2,22 @@
 from __future__ import annotations
 
 import argparse
-import json
+import shutil
 
-from .config import settings
+from .config import PROJECT_ROOT, settings
+
+
+def ensure_env() -> None:
+    """Create a .env from .env.example on first run so setup is zero-config.
+
+    The app runs fine without keys; this just gives the user a file to drop
+    their Groq/Tavily keys into later.
+    """
+    env = PROJECT_ROOT / ".env"
+    example = PROJECT_ROOT / ".env.example"
+    if not env.exists() and example.exists():
+        shutil.copyfile(example, env)
+        print(f"Created {env.name} from .env.example — add your API keys there to enable the LLM chat.")
 
 
 def main() -> None:
@@ -24,10 +37,14 @@ def main() -> None:
     if args.cmd == "serve" or args.cmd is None:
         import uvicorn
 
+        ensure_env()
+        host = getattr(args, "host", settings.host)
+        port = getattr(args, "port", settings.port)
+        print(f"Codebase Onboarding Agent running at http://{host}:{port}")
         uvicorn.run(
             "onboarding_agent.web.app:app",
-            host=getattr(args, "host", settings.host),
-            port=getattr(args, "port", settings.port),
+            host=host,
+            port=port,
             reload=False,
         )
     elif args.cmd == "analyze":
